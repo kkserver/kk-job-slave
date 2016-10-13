@@ -180,7 +180,7 @@ func main() {
 		if err != nil {
 			log.Println(err)
 		} else if result.Errno == 0 {
-			createJSONFile(result.Slave, "slave.json")
+			createJSONFile(result.Slave, workdir+"/job/slave.json")
 		} else {
 			log.Println(result.Errmsg)
 		}
