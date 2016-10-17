@@ -7,7 +7,7 @@ PWD=`pwd`
 exitCommand() {
 	rm -rf src
 	rm -f main
-	exit $1
+	exit
 }
 
 runCommand() {
@@ -15,7 +15,7 @@ runCommand() {
 	$CMD
 	if [ $? -ne 0 ]; then
 		echo -e "[FAIL] $CMD"
-		exitCommand 3
+		exitCommand
 	fi 
 }
 
@@ -56,10 +56,7 @@ echo $PWD
 
 #go
 
-./options.sh
-
-echo $PROJECT
-
+PROJECT="registry.cn-hangzhou.aliyuncs.com/kk/kk-job-slave"
 buildProject
 
 #exit
