@@ -246,6 +246,7 @@ func main() {
 						var fail = job.JobVersionFailTaskResult{}
 
 						request(sendRequest, baseURL+"job/slave/fail", time.Second, map[string]interface{}{
+							"token":      token,
 							"jobId":      fmt.Sprintf("%d", result.Version.JobId),
 							"version":    fmt.Sprintf("%d", result.Version.Version),
 							"statusText": err.Error()}, &fail)
@@ -345,6 +346,7 @@ func main() {
 								var r = job.JobVersionLogTaskResult{}
 
 								request(sendRequest, baseURL+"job/slave/log", time.Second, map[string]interface{}{
+									"token":   token,
 									"jobId":   fmt.Sprintf("%d", result.Version.JobId),
 									"version": fmt.Sprintf("%d", result.Version.Version),
 									"log":     fmt.Sprintf("[INFO] %s", v)}, &r)
@@ -368,6 +370,7 @@ func main() {
 								var r = job.JobVersionLogTaskResult{}
 
 								request(sendRequest, baseURL+"job/slave/log", time.Second, map[string]interface{}{
+									"token":   token,
 									"jobId":   fmt.Sprintf("%d", result.Version.JobId),
 									"version": fmt.Sprintf("%d", result.Version.Version),
 									"log":     fmt.Sprintf("[FAIL] %s", v)}, &r)
@@ -386,6 +389,7 @@ func main() {
 						var r = job.JobVersionOKTaskResult{}
 
 						request(sendRequest, baseURL+"job/slave/ok", time.Second, map[string]interface{}{
+							"token":   token,
 							"jobId":   fmt.Sprintf("%d", result.Version.JobId),
 							"version": fmt.Sprintf("%d", result.Version.Version)}, &r)
 
@@ -399,6 +403,7 @@ func main() {
 				var fail = job.JobVersionFailTaskResult{}
 
 				request(sendRequest, baseURL+"job/slave/fail", time.Second, map[string]interface{}{
+					"token":   token,
 					"jobId":   fmt.Sprintf("%d", result.Version.JobId),
 					"version": fmt.Sprintf("%d", result.Version.Version)}, &fail)
 
@@ -447,6 +452,10 @@ func main() {
 
 		}()
 
+	}, time.Second)
+
+	kk.GetDispatchMain().AsyncDelay(func() {
+		go jobProcess()
 	}, time.Second)
 
 	kk.DispatchMain()

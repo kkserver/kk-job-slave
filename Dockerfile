@@ -17,3 +17,4 @@ ENV KK_TOKEN 1
 VOLUME /workdir
 
 CMD kk-job-slave $KK_NAME $KK_ADDRESS $KK_BASEURL $KK_TOKEN /workdir
+
