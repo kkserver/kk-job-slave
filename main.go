@@ -193,25 +193,6 @@ func main() {
 
 	}
 
-	kk.GetDispatchMain().AsyncDelay(func() {
-
-		var result = job.JobSlaveLoginTask{}
-
-		var err = request(sendRequest, baseURL+"job/slave/login", time.Second, map[string]interface{}{"token": token}, &result)
-
-		if err != nil {
-
-			log.Println(err)
-
-			kk.GetDispatchMain().Break()
-
-			return
-		}
-
-		go online()
-
-	}, time.Second)
-
 	var jobProcess func() = nil
 
 	jobProcess = func() {
@@ -444,7 +425,28 @@ func main() {
 	}
 
 	kk.GetDispatchMain().AsyncDelay(func() {
-		go jobProcess()
+
+		go func() {
+
+			var result = job.JobSlaveLoginTask{}
+
+			var err = request(sendRequest, baseURL+"job/slave/login", time.Second, map[string]interface{}{"token": token}, &result)
+
+			if err != nil {
+
+				log.Println(err)
+
+				kk.GetDispatchMain().Break()
+
+				return
+			}
+
+			go online()
+
+			go jobProcess()
+
+		}()
+
 	}, time.Second)
 
 	kk.DispatchMain()
