@@ -195,6 +195,17 @@ func main() {
 
 	kk.GetDispatchMain().AsyncDelay(func() {
 
+		var err = request(sendRequest, baseURL+"job/slave/login", time.Second, map[string]interface{}{"token": token}, &result)
+
+		if err != nil {
+
+			log.Println(err)
+
+			kk.GetDispatchMain().Break()
+
+			return
+		}
+
 		go online()
 
 	}, time.Second)
