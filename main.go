@@ -195,6 +195,8 @@ func main() {
 
 	kk.GetDispatchMain().AsyncDelay(func() {
 
+		var result = job.JobSlaveLoginTask{}
+
 		var err = request(sendRequest, baseURL+"job/slave/login", time.Second, map[string]interface{}{"token": token}, &result)
 
 		if err != nil {
