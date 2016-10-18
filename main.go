@@ -1,7 +1,7 @@
 package main
 
 import (
-	"bufio"
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -10,6 +10,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"runtime/debug"
 	"time"
 )
 
@@ -54,9 +55,11 @@ func createJSONFile(data interface{}, path string) error {
 
 	defer fd.Close()
 
+	os.Chmod(path, 0777)
+
 	b, err := json.Marshal(data)
 
-	if err != nil {
+	if err == nil {
 
 		var n = 0
 
@@ -65,6 +68,7 @@ func createJSONFile(data interface{}, path string) error {
 			n, err := fd.Write(b)
 
 			if err != nil {
+				log.Println("[FAIL] " + err.Error())
 				return err
 			}
 
@@ -74,6 +78,8 @@ func createJSONFile(data interface{}, path string) error {
 				break
 			}
 		}
+	} else {
+		log.Println("[FAIL] " + err.Error())
 	}
 
 	return nil
@@ -88,6 +94,8 @@ func createTextFile(text string, path string) error {
 	if err != nil {
 		return err
 	}
+
+	os.Chmod(path, 0777)
 
 	defer fd.Close()
 
@@ -113,7 +121,7 @@ func createTextFile(text string, path string) error {
 	return nil
 }
 
-func createENVFile(options map[string]interface{}, path string) error {
+func createShellFile(options map[string]interface{}, path string, cmd string) error {
 
 	os.Remove(path)
 
@@ -122,6 +130,8 @@ func createENVFile(options map[string]interface{}, path string) error {
 	if err != nil {
 		return err
 	}
+
+	os.Chmod(path, 0777)
 
 	defer fd.Close()
 
@@ -141,7 +151,99 @@ func createENVFile(options map[string]interface{}, path string) error {
 
 	fd.WriteString("\n\n")
 
+	fd.WriteString(cmd)
+
+	fd.WriteString("\n")
+
 	return nil
+}
+
+func writeLogFile(tag string, log string, path string) error {
+
+	fd, err := os.OpenFile(path, os.O_APPEND, os.ModePerm)
+
+	if err != nil {
+
+		fd, err = os.Create(path)
+
+		if err != nil {
+			return err
+		}
+
+		os.Chmod(path, 0777)
+
+	}
+
+	defer fd.Close()
+
+	fd.WriteString(fmt.Sprintf("[%s][%s] %s", tag, time.Now().String(), log))
+
+	return nil
+}
+
+type LogWriter struct {
+	fd          *os.File
+	tag         string
+	token       string
+	jobId       int64
+	version     int
+	baseURL     string
+	sendRequest func(message *kk.Message, timeout time.Duration) *kk.Message
+	line        *bytes.Buffer
+}
+
+func NewLogWriter(path string, tag string, token string, jobId int64, version int, baseURL string, sendRequest func(message *kk.Message, timeout time.Duration) *kk.Message) (log *LogWriter, err error) {
+	var v = LogWriter{}
+	var e error = nil
+
+	v.fd, e = os.OpenFile(path, os.O_APPEND, 0)
+
+	if e != nil {
+
+		v.fd, e = os.Create(path)
+
+		if e != nil {
+			return nil, e
+		}
+
+		os.Chmod(path, 0777)
+
+	}
+
+	v.tag = tag
+	v.token = token
+	v.jobId = jobId
+	v.version = version
+	v.baseURL = baseURL
+	v.sendRequest = sendRequest
+	v.line = bytes.NewBuffer(nil)
+
+	return &v, nil
+}
+
+func (L *LogWriter) Close() error {
+	return L.fd.Close()
+}
+
+func (L *LogWriter) Write(p []byte) (n int, err error) {
+
+	for _, c := range p {
+		if c == '\n' {
+			var r = job.JobVersionLogTaskResult{}
+			request(L.sendRequest, L.baseURL+"job/slave/log", time.Second, map[string]interface{}{
+				"token":   L.token,
+				"jobId":   fmt.Sprintf("%d", L.jobId),
+				"version": fmt.Sprintf("%d", L.version),
+				"tag":     L.tag,
+				"log":     L.line.String()}, &r)
+			L.line.Reset()
+
+		} else {
+			L.line.WriteByte(c)
+		}
+	}
+
+	return L.fd.Write(p)
 }
 
 func main() {
@@ -239,7 +341,9 @@ func main() {
 
 					var fail = func(err error) {
 
-						log.Println(err)
+						log.Println("[FAIL] " + err.Error())
+
+						debug.PrintStack()
 
 						createTextFile(err.Error(), name+"fail")
 
@@ -295,32 +399,28 @@ func main() {
 							json.Unmarshal([]byte(result.Job.Options), &options)
 						}
 
-						err = createENVFile(options, name+"options.sh")
+						err = createShellFile(options, name+"run.sh", workdir+"/run.sh")
 
 						if err != nil {
 							fail(err)
 							return
 						}
 
-						cmd := exec.Command("/bin/sh", "-c", workdir+"/run.sh")
+						cmd := exec.Command("/bin/sh", "-c", name+"run.sh")
 
 						cmd.Dir = name
 
-						stdout, err := cmd.StdoutPipe()
+						stderr, err := NewLogWriter(name+"fail.log", "FAIL", token, result.Version.JobId, result.Version.Version, baseURL, sendRequest)
 
-						if err != nil {
-							fail(err)
-							return
-						}
+						cmd.Stderr = stderr
+
+						defer stderr.Close()
+
+						stdout, err := NewLogWriter(name+"info.log", "INFO", token, result.Version.JobId, result.Version.Version, baseURL, sendRequest)
+
+						cmd.Stdout = stdout
 
 						defer stdout.Close()
-
-						stderr, err := cmd.StderrPipe()
-
-						if err != nil {
-							fail(err)
-							return
-						}
 
 						err = cmd.Start()
 
@@ -329,59 +429,10 @@ func main() {
 							return
 						}
 
-						defer stderr.Close()
-
-						go func() {
-
-							rd := bufio.NewReader(stdout)
-
-							for true {
-
-								v, err := rd.ReadString('\n')
-
-								if err != nil {
-									break
-								}
-
-								var r = job.JobVersionLogTaskResult{}
-
-								request(sendRequest, baseURL+"job/slave/log", time.Second, map[string]interface{}{
-									"token":   token,
-									"jobId":   fmt.Sprintf("%d", result.Version.JobId),
-									"version": fmt.Sprintf("%d", result.Version.Version),
-									"log":     fmt.Sprintf("[INFO] %s", v)}, &r)
-
-							}
-
-						}()
-
-						go func() {
-
-							rd := bufio.NewReader(stderr)
-
-							for true {
-
-								v, err := rd.ReadString('\n')
-
-								if err != nil {
-									break
-								}
-
-								var r = job.JobVersionLogTaskResult{}
-
-								request(sendRequest, baseURL+"job/slave/log", time.Second, map[string]interface{}{
-									"token":   token,
-									"jobId":   fmt.Sprintf("%d", result.Version.JobId),
-									"version": fmt.Sprintf("%d", result.Version.Version),
-									"log":     fmt.Sprintf("[FAIL] %s", v)}, &r)
-
-							}
-
-						}()
-
 						err = cmd.Wait()
 
 						if err != nil {
+							log.Println(workdir + "/run.sh")
 							fail(err)
 							return
 						}
@@ -393,8 +444,9 @@ func main() {
 							"jobId":   fmt.Sprintf("%d", result.Version.JobId),
 							"version": fmt.Sprintf("%d", result.Version.Version)}, &r)
 
-						exit()
+						writeLogFile("INFO", "EXIT", name+"info.log")
 
+						exit()
 					})
 
 					return

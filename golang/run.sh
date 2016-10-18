@@ -3,7 +3,6 @@
 TAG=`date +%Y%m%d%H%M%S`
 PWD=`pwd`
 
-
 exitCommand() {
 	rm -rf src
 	rm -f main
@@ -14,7 +13,7 @@ runCommand() {
 	echo $CMD
 	$CMD
 	if [ $? -ne 0 ]; then
-		echo -e "[FAIL] $CMD"
+		echo "[FAIL] $CMD"
 		exitCommand 3
 	fi 
 }
@@ -56,15 +55,41 @@ echo $PWD
 
 #go
 
-./options.sh
 
-echo $PROJECT
+echo "GIT: $GIT"
+echo "PROJECT: $PROJECT"
 
-buildProject
+if [ -n "$GIT" ]; then
 
-#exit
+	if [ -n "$PROJECT" ]; then
 
-echo "[OK] TAG: $TAG"
+		URL=${GIT%:*}
+		T=${GIT##*:}
 
-exitCommand
+		CMD="git clone $URL main"
+		runCommand
+
+		CMD="cd main"
+		runCommand
+
+		CMD="git checkout $T"
+		runCommand
+
+		PWD=`pwd`
+		buildProject
+
+		echo "[OK] TAG: $TAG"
+
+		exitCommand
+
+	else 
+		echo "[FAIL] 未找到 PROJECT 地址, docker 镜像地址"
+		exit 4
+	fi
+
+else
+	echo "[FAIL] 未找到 GIT 地址"
+	exit 5
+fi
+
 
