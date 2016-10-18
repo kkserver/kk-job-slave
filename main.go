@@ -396,7 +396,20 @@ func main() {
 						}
 
 						if result.Version.Options != "" {
-							json.Unmarshal([]byte(result.Job.Options), &options)
+
+							var opts = map[string]interface{}{}
+
+							json.Unmarshal([]byte(result.Job.Options), &opts)
+
+							for key, value := range opts {
+								opt, ok := options[key]
+								if ok {
+									m, ok := opt.(map[string]interface{})
+									if ok {
+										m[key] = value
+									}
+								}
+							}
 						}
 
 						err = createShellFile(options, name+"run.sh", workdir+"/run.sh")
