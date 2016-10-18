@@ -1,5 +1,7 @@
 FROM alpine:latest
 
+RUN apk add --update git bash && rm -rf /var/cache/apk/* 
+
 RUN echo "Asia/shanghai" >> /etc/timezone
 
 COPY ./main /bin/kk-job-slave
