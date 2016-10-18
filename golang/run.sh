@@ -20,7 +20,7 @@ runCommand() {
 
 buildProject() {
 
-	GOPATH=$PWD
+	export GOPATH=$PWD
 
 	CMD="go get -d"
 
