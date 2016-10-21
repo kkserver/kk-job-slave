@@ -267,7 +267,7 @@ func main() {
 		baseURL = args[3]
 		token = args[4]
 		workdir = args[5]
-		processCount = int(args[6])
+		processCount, _ = ParseInt(args[6], 10, 0)
 	} else {
 		help()
 		return
