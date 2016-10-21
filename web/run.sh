@@ -56,6 +56,12 @@ buildProject() {
 	CMD="docker push $PROJECT:latest"
 	runCommand
 
+	CMD="git tag $TAG"
+	runCommand
+
+	CMD="git push origin $TAG"
+	runCommand
+	
 }
 
 echo $WORKDIR
