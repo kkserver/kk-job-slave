@@ -11,6 +11,7 @@ import (
 	"os"
 	"os/exec"
 	"runtime/debug"
+	"strconv"
 	"time"
 )
 
@@ -267,7 +268,7 @@ func main() {
 		baseURL = args[3]
 		token = args[4]
 		workdir = args[5]
-		processCount, _ = ParseInt(args[6], 10, 0)
+		processCount, _ = strconv.Atoi(args[6])
 	} else {
 		help()
 		return
