@@ -15,7 +15,7 @@ import (
 )
 
 func help() {
-	fmt.Println("kk-job-slave <name> <127.0.0.1:8700> <kk.job.> <token> <workdir>")
+	fmt.Println("kk-job-slave <name> <127.0.0.1:8700> <kk.job.> <token> <workdir> <processCount>")
 }
 
 func request(sendRequest func(message *kk.Message, timeout time.Duration) *kk.Message, to string, timeout time.Duration, data interface{}, result interface{}) error {
@@ -230,12 +230,14 @@ func (L *LogWriter) Write(p []byte) (n int, err error) {
 	for _, c := range p {
 		if c == '\n' {
 			var r = job.JobVersionLogTaskResult{}
+
 			request(L.sendRequest, L.baseURL+"job/slave/log", time.Second, map[string]interface{}{
 				"token":   L.token,
 				"jobId":   fmt.Sprintf("%d", L.jobId),
 				"version": fmt.Sprintf("%d", L.version),
 				"tag":     L.tag,
 				"log":     L.line.String()}, &r)
+
 			L.line.Reset()
 		} else if c == 0x1b {
 
@@ -257,13 +259,15 @@ func main() {
 	var baseURL string = ""
 	var token string = ""
 	var workdir string = ""
+	var processCount int = 10
 
-	if len(args) > 4 {
+	if len(args) > 6 {
 		name = args[1]
 		address = args[2]
 		baseURL = args[3]
 		token = args[4]
 		workdir = args[5]
+		processCount = int(args[6])
 	} else {
 		help()
 		return
@@ -426,14 +430,9 @@ func main() {
 
 						cmd.Dir = name
 
-						stderr, err := NewLogWriter(name+"fail.log", "FAIL", token, result.Version.JobId, result.Version.Version, baseURL, sendRequest)
-
-						cmd.Stderr = stderr
-
-						defer stderr.Close()
-
 						stdout, err := NewLogWriter(name+"info.log", "INFO", token, result.Version.JobId, result.Version.Version, baseURL, sendRequest)
 
+						cmd.Stderr = stdout
 						cmd.Stdout = stdout
 
 						defer stdout.Close()
@@ -463,6 +462,14 @@ func main() {
 						writeLogFile("INFO", "EXIT", name+"info.log")
 
 						exit()
+					})
+
+					kk.GetDispatchMain().Async(func() {
+
+						if len(process) < processCount {
+							go jobProcess()
+						}
+
 					})
 
 					return
