@@ -507,7 +507,7 @@ func main() {
 
 			if err != nil {
 
-				log.Println(err)
+				log.Println("[FAIL] " + err.Error())
 
 				kk.GetDispatchMain().Break()
 
@@ -522,14 +522,12 @@ func main() {
 
 	}, time.Second)
 
-	kk.GetDispatchMain().AsyncDelay(func() {
-		go jobProcess()
-	}, time.Second)
-
 	kk.DispatchMain()
 
 	for _, v := range process {
 		v.Break()
 	}
+
+	log.Println("[EXIT]")
 
 }
