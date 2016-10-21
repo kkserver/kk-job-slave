@@ -231,17 +231,13 @@ func (L *LogWriter) Write(p []byte) (n int, err error) {
 	for _, c := range p {
 		if c == '\n' {
 			var r = job.JobVersionLogTaskResult{}
-
 			request(L.sendRequest, L.baseURL+"job/slave/log", time.Second, map[string]interface{}{
 				"token":   L.token,
 				"jobId":   fmt.Sprintf("%d", L.jobId),
 				"version": fmt.Sprintf("%d", L.version),
 				"tag":     L.tag,
 				"log":     L.line.String()}, &r)
-
 			L.line.Reset()
-		} else if c == 0x1b {
-
 		} else {
 			L.line.WriteByte(c)
 		}
