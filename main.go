@@ -423,7 +423,7 @@ func main() {
 							return
 						}
 
-						cmd := exec.Command("/bin/sh", "-c", name+"run.sh")
+						cmd := exec.Command("/bin/bash", "-c", name+"run.sh")
 
 						cmd.Dir = name
 
