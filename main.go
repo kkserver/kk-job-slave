@@ -237,6 +237,7 @@ func (L *LogWriter) Write(p []byte) (n int, err error) {
 				"tag":     L.tag,
 				"log":     L.line.String()}, &r)
 			L.line.Reset()
+		} else if c == 0x1b {
 
 		} else {
 			L.line.WriteByte(c)
