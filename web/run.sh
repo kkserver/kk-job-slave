@@ -1,11 +1,22 @@
 #/bin/sh
 
+export OSS_ACCESS_KEY_ID=
+export OSS_ACCESS_KEY_SECRET=
+export OSS_BUCKET=
+export OSS_ENDPOINT=
+
+export STATIC="./static"
+export VIEW="./@app"
+
+if [ ! "$STATIC_PATTERN" ]; then
+	STATIC_PATTERN="(\.min\.css$)|(\.min\.js$)|(/fontello/((css)|(font))/)"
+fi
+
+
 TAG=`date +%Y%m%d%H%M%S`
 WORKDIR=`pwd`
 
 exitCommand() {
-	rm -rf src
-	rm -f main
 	exit $1
 }
 
@@ -13,28 +24,34 @@ runCommand() {
 	echo $CMD
 	$CMD
 	if [ $? -ne 0 ]; then
-		echo "[FAIL] $CMD"
+		echo -e "[FAIL] $CMD"
 		exitCommand 3
 	fi 
 }
 
 buildProject() {
 
-	export GOPATH=$WORKDIR
+	#static compressor
 
-	CMD="go get -d"
+	if [ -d "$HOME/.kk-shell" ]; then
+		cd "$HOME/.kk-shell"
+		git pull origin master
+		cd $WORKDIR
+	else
+		git clone http://github.com/kkserver/kk-shell $HOME/.kk-shell
+		chmod +x $HOME/.kk-shell/web/build.sh
+		chmod +x $HOME/.kk-shell/web/view.py
+	fi
 
+	CMD="$HOME/.kk-shell/web/build.sh"
 	runCommand
 
-	#build
-
-	CMD="docker pull registry.cn-hangzhou.aliyuncs.com/kk/kk-golang:latest"
-
-	runCommand
-
-	CMD="docker run --rm -v $WORKDIR:/main:rw -v $WORKDIR:/go:rw registry.cn-hangzhou.aliyuncs.com/kk/kk-golang:latest go build"
-
-	runCommand
+	if [ -d "./static" ]; then
+		cd static
+		CMD="$HOME/.kk-shell/oss/upload.sh static \"$STATIC_PATTERN\""
+		runCommand
+		cd ..
+	fi
 
 	#docker
 	CMD="docker build -t $PROJECT:$TAG ."
@@ -91,5 +108,4 @@ else
 	echo "[FAIL] 未找到 GIT 地址"
 	exit 5
 fi
-
 
