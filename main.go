@@ -136,7 +136,7 @@ func createShellFile(options map[string]interface{}, path string, cmd string) er
 
 	defer fd.Close()
 
-	fd.WriteString("#/bin/sh\n\n")
+	fd.WriteString("#/bin/bash\n\n")
 
 	for key, value := range options {
 		var option, ok = value.(map[string]interface{})
