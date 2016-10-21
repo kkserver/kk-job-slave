@@ -1,9 +1,17 @@
 #/bin/sh
 
-export OSS_ACCESS_KEY_ID=
-export OSS_ACCESS_KEY_SECRET=
-export OSS_BUCKET=
-export OSS_ENDPOINT=
+SHDIR=`dirname $0`
+
+for LN in `cat $SHDIR/evn.ini` 
+do
+	if [[ "$SECTION"="[ENV]" ]]; then
+		KEY=${LN%=*}
+		VALUE=${LN#*=}
+		export $KEY=$VALUE
+	elif [[ "$LN"="[ENV]" ]]; then
+		SECTION=$LN
+	fi
+done
 
 export STATIC="./static"
 export VIEW="./@app"
