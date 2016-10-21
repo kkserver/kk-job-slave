@@ -2,7 +2,7 @@
 
 SHDIR=`dirname $0`
 
-for LN in `cat $SHDIR/evn.ini` 
+for LN in `cat $SHDIR/env.ini` 
 do
 	if [[ "$SECTION"="[ENV]" ]]; then
 		KEY=${LN%=*}
