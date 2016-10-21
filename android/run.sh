@@ -13,3 +13,8 @@ runCommand() {
 	fi 
 }
 
+PROJECT=/Users/didi/Documents/ttook/desktop
+
+cd $PROJECT
+
+CMD=./gradlew

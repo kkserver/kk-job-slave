@@ -334,7 +334,9 @@ func main() {
 
 							delete(process, name)
 
-							go jobProcess()
+							kk.GetDispatchMain().AsyncDelay(func() {
+								go jobProcess()
+							}, time.Second*6)
 
 						})
 
