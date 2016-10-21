@@ -47,13 +47,6 @@ buildProject() {
 	CMD="$HOME/.kk-shell/web/build.sh"
 	runCommand
 
-	if [ -d "./static" ]; then
-		cd static
-		CMD="$HOME/.kk-shell/oss/upload.py static \"$STATIC_PATTERN\""
-		runCommand
-		cd ..
-	fi
-
 	#docker
 	CMD="docker build -t $PROJECT:$TAG ."
 	runCommand
