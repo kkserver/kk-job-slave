@@ -24,7 +24,7 @@ runCommand() {
 	echo $CMD
 	$CMD
 	if [ $? -ne 0 ]; then
-		echo -e "[FAIL] $CMD"
+		echo "[FAIL] $CMD"
 		exitCommand 3
 	fi 
 }
@@ -41,6 +41,7 @@ buildProject() {
 		git clone http://github.com/kkserver/kk-shell $HOME/.kk-shell
 		chmod +x $HOME/.kk-shell/web/build.sh
 		chmod +x $HOME/.kk-shell/web/view.py
+		chmod +x $HOME/.kk-shell/oss/upload.py
 	fi
 
 	CMD="$HOME/.kk-shell/web/build.sh"
@@ -48,7 +49,7 @@ buildProject() {
 
 	if [ -d "./static" ]; then
 		cd static
-		CMD="$HOME/.kk-shell/oss/upload.sh static \"$STATIC_PATTERN\""
+		CMD="$HOME/.kk-shell/oss/upload.py static \"$STATIC_PATTERN\""
 		runCommand
 		cd ..
 	fi
