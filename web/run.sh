@@ -1,17 +1,5 @@
 #/bin/sh
 
-SHDIR=`dirname $0`
-
-for LN in `cat $SHDIR/env.ini` 
-do
-	if [[ "$SECTION"="[ENV]" ]]; then
-		KEY=${LN%=*}
-		VALUE=${LN#*=}
-		export $KEY=$VALUE
-	elif [[ "$LN"="[ENV]" ]]; then
-		SECTION=$LN
-	fi
-done
 
 export STATIC="./static"
 export VIEW="./@app"
