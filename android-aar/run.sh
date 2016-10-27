@@ -2,6 +2,7 @@
 
 WORKDIR=`pwd`
 TAG=`date +%Y%m%d%H%M%S`
+SHDIR=`dirname $0`
 
 MAVEN_DIR="$WORKDIR/../../maven"
 
@@ -38,6 +39,19 @@ echo "MAVEN_ARTIFACTID: $MAVEN_ARTIFACTID"
 echo "AAR_NAME: $AAR_NAME"
 echo "DEBUG: $DEBUG"
 
+for LN in `cat $SHDIR/options.ini`
+do
+	if [[ $KK_SECTION = "[ENV]" ]]; then
+		KK_KEY=${LN%=*}
+		KK_VALUE=${LN#*=}
+		$KK_KEY=$KK_VALUE
+		continue
+	fi
+	if [[ $LN = "[ENV]" ]]; then
+		KK_SECTION="$LN"
+	fi
+done
+
 if [ -n "$GIT" ]; then
 
 
@@ -60,6 +74,8 @@ if [ -n "$GIT" ]; then
 	runCommand
 
 	GIT_TAG=1
+
+	echo -e "ndk.dir=$ANDROID_NDK_DIR\nsdk.dir=$ANDROID_SDK_DIR" > "./local.properties"
 
 	if [[ "$DEBUG" ]]; then
 		CMD="./gradlew assembleDebug"
