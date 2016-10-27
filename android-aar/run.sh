@@ -83,7 +83,7 @@ if [ -n "$GIT" ]; then
 		AAR_FNAME="$AAR_NAME-debug.aar"
 	else
 		CMD="./gradlew assembleRelease"
-		AAR_FNAME="$AAR_NAME-debug.aar"
+		AAR_FNAME="$AAR_NAME-release.aar"
 	fi
 	runCommand
 
@@ -99,7 +99,7 @@ if [ -n "$GIT" ]; then
 		mkdir "$MAVEN_DIR/$MAVEN_GROUPID/$MAVEN_ARTIFACTID/$TAG"
 	fi
 
-	CMD="cp ./app/build/outputs/aar/$AAR_FNAME $MAVEN_DIR/$MAVEN_GROUPID/$MAVEN_ARTIFACTID/$TAG/$AAR_NAME-$TAG.aar"
+	CMD="cp ./$AAR_NAME/build/outputs/aar/$AAR_FNAME $MAVEN_DIR/$MAVEN_GROUPID/$MAVEN_ARTIFACTID/$TAG/$AAR_NAME-$TAG.aar"
 	runCommand
 
 	echo "[OK] TAG: $TAG"
