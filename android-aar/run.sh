@@ -4,7 +4,7 @@ WORKDIR=`pwd`
 TAG=`date +%Y%m%d%H%M%S`
 SHDIR=`dirname $0`
 
-MAVEN_DIR="$WORKDIR/../../maven"
+MAVEN_DIR="$WORKDIR/../../../maven"
 
 exitCommand() {
 	if [[ $"GIT_TAG" ]]; then
