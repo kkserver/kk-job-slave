@@ -7,7 +7,7 @@ SHDIR=`dirname $0`
 MAVEN_DIR="$WORKDIR/../../../maven"
 
 exitCommand() {
-	if [[ $"GIT_TAG" ]]; then
+	if [[ $"GIT_TAG" = "1" ]]; then
 		CMD="git push origin --delete tag $TAG"
 		echo $CMD
 		$CMD
@@ -105,7 +105,7 @@ if [ -n "$GIT" ]; then
 	echo "[OK] TAG: $TAG"
 
 	GIT_TAG=
-	
+
 	exitCommand
 
 
