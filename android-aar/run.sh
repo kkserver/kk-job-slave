@@ -44,7 +44,7 @@ do
 	if [[ $KK_SECTION = "[ENV]" ]]; then
 		KK_KEY=${LN%=*}
 		KK_VALUE=${LN#*=}
-		$KK_KEY=$KK_VALUE
+		export $KK_KEY=$KK_VALUE
 		continue
 	fi
 	if [[ $LN = "[ENV]" ]]; then
