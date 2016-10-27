@@ -7,7 +7,13 @@ MAVEN_DIR="$WORKDIR/../../maven"
 
 exitCommand() {
 	if [[ $"GIT_TAG" ]]; then
-		git push origin --delete tag $TAG
+		CMD="git push origin --delete tag $TAG"
+		echo $CMD
+		$CMD
+		if [ $? -ne 0 ]; then
+			echo "[FAIL] $CMD"
+			exit 3
+		fi 
 	fi
 	exit $1
 }
