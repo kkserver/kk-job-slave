@@ -104,6 +104,8 @@ if [ -n "$GIT" ]; then
 
 	echo "[OK] TAG: $TAG"
 
+	GIT_TAG=
+	
 	exitCommand
 
 
