@@ -99,7 +99,7 @@ if [ -n "$GIT" ]; then
 		mkdir "$MAVEN_DIR/$MAVEN_GROUPID/$MAVEN_ARTIFACTID/$TAG"
 	fi
 
-	CMD="cp ./build/outputs/aar/$AAR_FNAME $MAVEN_DIR/$MAVEN_GROUPID/$MAVEN_ARTIFACTID/$TAG/$AAR_NAME-$TAG.aar"
+	CMD="cp ./app/build/outputs/aar/$AAR_FNAME $MAVEN_DIR/$MAVEN_GROUPID/$MAVEN_ARTIFACTID/$TAG/$AAR_NAME-$TAG.aar"
 	runCommand
 
 	echo "[OK] TAG: $TAG"
