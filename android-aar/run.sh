@@ -4,8 +4,6 @@ WORKDIR=`pwd`
 TAG=`date +%Y%m%d%H%M%S`
 SHDIR=`dirname $0`
 
-MAVEN_DIR="$WORKDIR/../../../maven"
-
 exitCommand() {
 	if [[ $"GIT_TAG" = "1" ]]; then
 		CMD="git push origin --delete tag $TAG"
@@ -28,16 +26,9 @@ runCommand() {
 	fi 
 }
 
-#MAVEN_GROUPID=
-#MAVEN_ARTIFACTID=
-#AAR_NAME=
-#DEBUG=
 
 echo -e "\033[32m$WORKDIR\033[0m"
 echo "GIT: $GIT"
-echo "MAVEN_GROUPID: $MAVEN_GROUPID"
-echo "MAVEN_ARTIFACTID: $MAVEN_ARTIFACTID"
-echo "AAR_NAME: $AAR_NAME"
 echo "DEBUG: $DEBUG"
 
 for LN in `cat $SHDIR/options.ini`
@@ -77,29 +68,16 @@ if [ -n "$GIT" ]; then
 	GIT_TAG=1
 
 	echo -e "ndk.dir=$ANDROID_NDK_DIR\nsdk.dir=$ANDROID_SDK_DIR" > "./local.properties"
+	echo -e "\nRELEASE_REPOSITORY_URL=$RELEASE_REPOSITORY_URL\n" >> "./gradle.properties"
 
 	if [[ "$DEBUG" ]]; then
 		CMD="./gradlew assembleDebug"
-		AAR_FNAME="$AAR_NAME-debug.aar"
 	else
 		CMD="./gradlew assembleRelease"
-		AAR_FNAME="$AAR_NAME-release.aar"
 	fi
 	runCommand
 
-	if [ ! -d "$MAVEN_DIR/$MAVEN_GROUPID" ]; then
-		mkdir "$MAVEN_DIR/$MAVEN_GROUPID"
-	fi
-
-	if [ ! -d "$MAVEN_DIR/$MAVEN_GROUPID/$MAVEN_ARTIFACTID" ]; then
-		mkdir "$MAVEN_DIR/$MAVEN_GROUPID/$MAVEN_ARTIFACTID"
-	fi
-
-	if [ ! -d "$MAVEN_DIR/$MAVEN_GROUPID/$MAVEN_ARTIFACTID/$TAG" ]; then
-		mkdir "$MAVEN_DIR/$MAVEN_GROUPID/$MAVEN_ARTIFACTID/$TAG"
-	fi
-
-	CMD="cp ./$AAR_NAME/build/outputs/aar/$AAR_FNAME $MAVEN_DIR/$MAVEN_GROUPID/$MAVEN_ARTIFACTID/$TAG/$MAVEN_ARTIFACTID-$TAG.aar"
+	CMD="./gradlew uploadArchives"
 	runCommand
 
 	echo "[OK] TAG: $TAG"
