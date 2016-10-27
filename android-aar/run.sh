@@ -33,6 +33,7 @@ runCommand() {
 #AAR_NAME=
 #DEBUG=
 
+echo -e "\033[32m$WORKDIR\033[0m"
 echo "GIT: $GIT"
 echo "MAVEN_GROUPID: $MAVEN_GROUPID"
 echo "MAVEN_ARTIFACTID: $MAVEN_ARTIFACTID"

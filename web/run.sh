@@ -64,7 +64,7 @@ buildProject() {
 	
 }
 
-echo -e "\033[31m$WORKDIR\033[0m"
+echo -e "\033[32m$WORKDIR\033[0m"
 
 #go
 
