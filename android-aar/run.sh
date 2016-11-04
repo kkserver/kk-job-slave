@@ -70,6 +70,9 @@ if [ -n "$GIT" ]; then
 	echo -e "ndk.dir=$ANDROID_NDK_DIR\nsdk.dir=$ANDROID_SDK_DIR" > "./local.properties"
 	echo -e "\nRELEASE_REPOSITORY_URL=$RELEASE_REPOSITORY_URL\n" >> "./gradle.properties"
 
+	rm -f build.gradle
+	cp $SHDIR/build.gradle build.gradle
+
 	if [[ "$DEBUG" ]]; then
 		CMD="./gradlew assembleDebug"
 	else
