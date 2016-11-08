@@ -5,7 +5,7 @@ TAG=`date +%Y%m%d%H%M%S`
 SHDIR=`dirname $0`
 
 exitCommand() {
-	if [[ $"GIT_TAG" = "1" ]]; then
+	if [[ "$GIT_TAG" = "1" ]]; then
 		CMD="git push origin --delete tag $TAG"
 		echo $CMD
 		$CMD
