@@ -2,18 +2,19 @@
 
 buildscript {
     repositories {
+    	maven { url 'http://maven.aliyun.com/nexus/content/repositories/jcenter'}
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.1.2'
+        classpath 'com.android.tools.build:gradle:2.2.2'
     }
 }
 
 allprojects {
     repositories {
+    	maven { url 'http://maven.aliyun.com/nexus/content/repositories/jcenter'}
+    	maven { url 'http://maven.kkserver.cn/' }
         jcenter()
-        maven { url 'http://maven.kkserver.cn/' }
-        maven { url 'http://maven.aliyun.com/nexus/content/repositories/jcenter'}
     }
 }
 
