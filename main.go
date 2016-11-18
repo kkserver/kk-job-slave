@@ -2,11 +2,11 @@ package main
 
 import (
 	"bytes"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/kkserver/kk-job/job"
 	"github.com/kkserver/kk-lib/kk"
+	"github.com/kkserver/kk-lib/kk/json"
 	"log"
 	"os"
 	"os/exec"
@@ -23,7 +23,7 @@ func request(sendRequest func(message *kk.Message, timeout time.Duration) *kk.Me
 
 	log.Printf("[REQUEST] %s ...\n", to)
 
-	var b, _ = json.Marshal(data)
+	var b, _ = json.Encode(data)
 	var v = kk.Message{"REQUEST", "", to, "text/json", b}
 	var r = sendRequest(&v, timeout)
 
@@ -38,7 +38,7 @@ func request(sendRequest func(message *kk.Message, timeout time.Duration) *kk.Me
 	}
 
 	if r.Type == "text/json" || r.Type == "application/json" {
-		return json.Unmarshal(r.Content, result)
+		return json.Decode(r.Content, result)
 	}
 
 	return nil
@@ -58,7 +58,7 @@ func createJSONFile(data interface{}, path string) error {
 
 	os.Chmod(path, 0777)
 
-	b, err := json.Marshal(data)
+	b, err := json.Encode(data)
 
 	if err == nil {
 
@@ -143,7 +143,7 @@ func createShellFile(options map[string]interface{}, path string, cmd string) er
 		if ok {
 			v, ok := option["value"]
 			if ok {
-				b, _ := json.Marshal(v)
+				b, _ := json.Encode(v)
 				fmt.Fprintf(fd, "export %s=%s\n", key, string(b))
 			}
 
@@ -396,14 +396,14 @@ func main() {
 						var options = map[string]interface{}{}
 
 						if result.Job.Options != "" {
-							json.Unmarshal([]byte(result.Job.Options), &options)
+							json.Decode([]byte(result.Job.Options), &options)
 						}
 
 						if result.Version.Options != "" {
 
 							var opts = map[string]interface{}{}
 
-							json.Unmarshal([]byte(result.Job.Options), &opts)
+							json.Decode([]byte(result.Job.Options), &opts)
 
 							for key, value := range opts {
 								opt, ok := options[key]
