@@ -2,6 +2,7 @@
 
 TAG=`date +%Y%m%d%H%M%S`
 WORKDIR=`pwd`
+SHDIR=`dirname $0`
 
 exitCommand() {
 	rm -rf src
@@ -22,8 +23,13 @@ buildProject() {
 
 	export GOPATH=$WORKDIR
 
-	CMD="go get -d"
+	CMD="mkdir src"
+	runCommand
 
+	CMD="ln -s $SHDIR/golang.org $WORKDIR/src/golang.org"
+	runCommand
+
+	CMD="go get -d"
 	runCommand
 
 	#build
