@@ -25,9 +25,6 @@ buildProject() {
 
 	CMD="mkdir src"
 	runCommand
-
-	CMD="mkdir src"
-	runCommand
 	
 	CMD="ln -s $SHDIR/golang.org $WORKDIR/src/golang.org"
 	runCommand
