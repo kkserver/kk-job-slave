@@ -26,9 +26,6 @@ buildProject() {
 	CMD="mkdir src"
 	runCommand
 	
-	CMD="ln -s $SHDIR/golang.org $WORKDIR/src/golang.org"
-	runCommand
-
 	CMD="go get -d"
 	runCommand
 
