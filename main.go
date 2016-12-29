@@ -189,11 +189,11 @@ type LogWriter struct {
 	jobId       int64
 	version     int
 	baseURL     string
-	sendRequest func(message *kk.Message, timeout time.Duration) *kk.Message
+	sendRequest func(message *kk.Message, trackId string, timeout time.Duration) *kk.Message
 	line        *bytes.Buffer
 }
 
-func NewLogWriter(path string, tag string, token string, jobId int64, version int, baseURL string, sendRequest func(message *kk.Message, timeout time.Duration) *kk.Message) (log *LogWriter, err error) {
+func NewLogWriter(path string, tag string, token string, jobId int64, version int, baseURL string, sendRequest func(message *kk.Message, trackId string, timeout time.Duration) *kk.Message) (log *LogWriter, err error) {
 	var v = LogWriter{}
 	var e error = nil
 
