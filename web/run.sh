@@ -2,7 +2,7 @@
 
 
 export STATIC="./static"
-export VIEW="./@app"
+export VIEW="./web"
 
 if [ ! "$STATIC_PATTERN" ]; then
 	STATIC_PATTERN="(\.min\.css$)|(\.min\.js$)|(/fontello/((css)|(font))/)"
