@@ -19,13 +19,13 @@ func help() {
 	fmt.Println("kk-job-slave <name> <127.0.0.1:8700> <kk.job.> <token> <workdir> <processCount>")
 }
 
-func request(sendRequest func(message *kk.Message, timeout time.Duration) *kk.Message, to string, timeout time.Duration, data interface{}, result interface{}) error {
+func request(sendRequest func(message *kk.Message, trackId string, timeout time.Duration) *kk.Message, to string, timeout time.Duration, data interface{}, result interface{}) error {
 
 	log.Printf("[REQUEST] %s ...\n", to)
 
 	var b, _ = json.Encode(data)
 	var v = kk.Message{"REQUEST", "", to, "text/json", b}
-	var r = sendRequest(&v, timeout)
+	var r = sendRequest(&v, "", timeout)
 
 	log.Printf("[REQUEST] %s %s\n", to, r.String())
 
@@ -270,7 +270,7 @@ func main() {
 		return
 	}
 
-	var sendRequest, _ = kk.TCPClientRequestConnect(name, address, map[string]interface{}{"exclusive": true})
+	var sendRequest, _, _ = kk.TCPClientRequestConnect(name, address, map[string]interface{}{"exclusive": true})
 
 	var process map[string]*kk.Dispatch = map[string]*kk.Dispatch{}
 	var online func() = nil
