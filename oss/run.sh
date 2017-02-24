@@ -6,6 +6,7 @@ SHDIR=`dirname $0`
 
 exitCommand() {
 	if [[ "$GIT_TAG" = "1" ]]; then
+		cd $WORKDIR/main
 		CMD="git push origin --delete tag $TAG"
 		echo $CMD
 		$CMD
