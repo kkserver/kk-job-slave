@@ -78,7 +78,7 @@ if [ -n "$GIT" ]; then
 	if [ -d "$HOME/.kk-shell" ]; then
 		cd "$HOME/.kk-shell"
 		git pull origin master
-		cd $WORKDIR
+		cd $WORKDIR/main
 	else
 		git clone http://github.com/kkserver/kk-shell $HOME/.kk-shell
 	fi
