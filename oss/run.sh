@@ -90,6 +90,8 @@ if [ -n "$GIT" ]; then
 	CMD="$HOME/.kk-shell/web/build.sh"
 	runCommand
 
+	cd $STATIC
+
 	CMD="$HOME/.kk-shell/oss/upload.py $ALIAS"
 	runCommand
 
