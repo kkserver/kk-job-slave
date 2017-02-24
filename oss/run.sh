@@ -69,9 +69,9 @@ if [ -n "$GIT" ]; then
 	GIT_TAG=1
 
 	if [ -n "$SRC_PATH" ]; then
-		export STATIC="."
-	else
 		export STATIC=$SRC_PATH
+	else
+		export STATIC="."
 	fi
 
 	if [ -d "$HOME/.kk-shell" ]; then
