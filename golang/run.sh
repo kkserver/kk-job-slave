@@ -87,10 +87,13 @@ if [ -n "$GIT" ]; then
 
 		WORKDIR=`pwd`
 
-		CMD="cd %SRC_PATH"
+		CMD="cd $SRC_PATH"
 		runCommand
 
 		CMD="git checkout $T"
+		runCommand
+
+		CMD="cd $WORKDIR"
 		runCommand
 
 		buildProject 
