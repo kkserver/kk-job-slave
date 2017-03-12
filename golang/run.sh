@@ -5,8 +5,6 @@ WORKDIR=`pwd`
 SHDIR=`dirname $0`
 
 exitCommand() {
-	rm -rf src
-	rm -f main
 	exit $1
 }
 
@@ -23,38 +21,9 @@ buildProject() {
 
 	export GOPATH=$WORKDIR
 
-	CMD="mkdir src"
+	CMD="cd $SRC_PATH"
 	runCommand
 
-	if [ -f "kk.ini" ]; then
-
-		for LN in `cat kk.ini`
-		do
-			if [[ $KK_SECTION = "[GIT]" ]]; then
-				KK_KEY=${LN%=*}
-				KK_VALUE=${LN#*=}
-				URL=${KK_VALUE%:*}
-				TAG=${KK_VALUE##*:}
-
-				CMD="git clone $URL src/$KK_KEY"
-				runCommand
-
-				CMD="cd src/$KK_KEY"
-				runCommand
-
-				CMD="git checkout $TAG"
-				runCommand
-
-				CMD="cd $WORKDIR"
-				runCommand
-			fi
-			if [[ $LN = "[GIT]" ]]; then
-				KK_SECTION="$LN"
-			fi
-		done
-
-	fi
-	
 	CMD="go get -d"
 	runCommand
 
@@ -96,6 +65,12 @@ echo -e "\033[32m$WORKDIR\033[0m"
 
 echo "GIT: $GIT"
 echo "PROJECT: $PROJECT"
+echo "SRC_PATH: $SRC_PATH"
+
+if [ ! $SRC_PATH ]
+then
+$SRC_PATH=src
+fi
 
 if [ -n "$GIT" ]; then
 
@@ -104,17 +79,21 @@ if [ -n "$GIT" ]; then
 		URL=${GIT%:*}
 		T=${GIT##*:}
 
-		CMD="git clone $URL main"
+		CMD="git clone $URL main/%SRC_PATH"
 		runCommand
 
 		CMD="cd main"
 		runCommand
 
+		WORKDIR=`pwd`
+
+		CMD="cd %SRC_PATH"
+		runCommand
+
 		CMD="git checkout $T"
 		runCommand
 
-		WORKDIR=`pwd`
-		buildProject
+		buildProject 
 
 		echo "[OK] TAG: $TAG"
 
