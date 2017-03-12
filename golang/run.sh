@@ -25,6 +25,35 @@ buildProject() {
 
 	CMD="mkdir src"
 	runCommand
+
+	if [ -f "kk.ini" ]; then
+
+		for LN in `cat kk.ini`
+		do
+			if [[ $KK_SECTION = "[GIT]" ]]; then
+				KK_KEY=${LN%=*}
+				KK_VALUE=${LN#*=}
+				URL=${KK_VALUE%:*}
+				TAG=${KK_VALUE##*:}
+
+				CMD="git clone $URL src/$KK_KEY"
+				runCommand
+
+				CMD="cd src/$KK_KEY"
+				runCommand
+
+				CMD="git checkout $TAG"
+				runCommand
+
+				CMD="cd $WORKDIR"
+				runCommand
+			fi
+			if [[ $LN = "[GIT]" ]]; then
+				KK_SECTION="$LN"
+			fi
+		done
+
+	fi
 	
 	CMD="go get -d"
 	runCommand
