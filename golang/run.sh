@@ -79,7 +79,7 @@ if [ -n "$GIT" ]; then
 		URL=${GIT%:*}
 		T=${GIT##*:}
 
-		CMD="git clone $URL main/%SRC_PATH"
+		CMD="git clone $URL main/$SRC_PATH"
 		runCommand
 
 		CMD="cd main"
