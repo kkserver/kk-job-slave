@@ -33,7 +33,7 @@ buildProject() {
 
 	runCommand
 
-	CMD="docker run --rm -v $WORKDIR:/main:rw -v $WORKDIR:/go:rw registry.cn-hangzhou.aliyuncs.com/kk/kk-golang:latest go build"
+	CMD="docker run --rm -v $WORKDIR:/main:rw -v $WORKDIR:/go:rw registry.cn-hangzhou.aliyuncs.com/kk/kk-golang:latest cd $SRC_PATH & go build"
 
 	runCommand
 
