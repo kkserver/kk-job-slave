@@ -69,7 +69,7 @@ echo "SRC_PATH: $SRC_PATH"
 
 if [ ! $SRC_PATH ]
 then
-$SRC_PATH=src
+SRC_PATH=src
 fi
 
 if [ -n "$GIT" ]; then
