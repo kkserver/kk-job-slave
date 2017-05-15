@@ -69,9 +69,6 @@ if [ -n "$GIT" ]; then
 
 	echo -e "\nRELEASE_REPOSITORY_URL=$RELEASE_REPOSITORY_URL\n" > "./gradle.properties"
 
-	rm -f build.gradle
-	cp $SHDIR/build.gradle build.gradle
-
 	CMD="./gradlew build"
 	runCommand
 
