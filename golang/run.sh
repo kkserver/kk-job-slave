@@ -21,6 +21,9 @@ buildProject() {
 
 	export GOPATH=$WORKDIR
 
+	CMD="ln -s $HOME/src $WORKDIR/src"
+	runCommand
+	
 	CMD="cd $SRC_PATH"
 	runCommand
 
