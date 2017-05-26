@@ -26,8 +26,8 @@ buildProject() {
 		if [[ $KK_SECTION = "[CP]" ]]; then
 			KK_KEY=${LN%=*}
 			KK_VALUE=${LN#*=}
-			echo "cp -r $KK_KEY $WORKDIR/$KK_VALUE"
-			cp -r $KK_KEY $WORKDIR/$KK_VALUE
+			CMD="cp -r $KK_KEY $WORKDIR/$KK_VALUE"
+			runCommand
 			continue
 		fi
 		if [[ $LN = "[CP]" ]]; then
