@@ -21,9 +21,20 @@ buildProject() {
 
 	export GOPATH=$WORKDIR
 
-	CMD="ln -s $HOME/src $WORKDIR/src"
-	runCommand
-	
+	for LN in `cat $SHDIR/options.ini`
+	do
+		if [[ $KK_SECTION = "[LN]" ]]; then
+			KK_KEY=${LN%=*}
+			KK_VALUE=${LN#*=}
+			echo "ln -s $KK_KEY=$WORKDIR/$KK_VALUE"
+			ln -s $KK_KEY=$WORKDIR/$KK_VALUE
+			continue
+		fi
+		if [[ $LN = "[LN]" ]]; then
+			KK_SECTION="$LN"
+		fi
+	done
+
 	CMD="cd $SRC_PATH"
 	runCommand
 
@@ -89,6 +100,9 @@ if [ -n "$GIT" ]; then
 		runCommand
 
 		WORKDIR=`pwd`
+
+		echo "mkdir -p $SRC_PATH"
+		mkdir -p $SRC_PATH
 
 		CMD="cd $SRC_PATH"
 		runCommand
