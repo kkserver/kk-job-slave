@@ -28,6 +28,12 @@ buildProject() {
 			KK_VALUE=${LN#*=}
 			CMD="cp -r $KK_KEY $WORKDIR/$KK_VALUE"
 			runCommand
+			CMD="cd $WORKDIR/$KK_VALUE"
+			runCommand
+			CMD="git pull"
+			runCommand
+			CMD="cd $WORKDIR"
+			runCommand
 			continue
 		fi
 		if [[ $LN = "[CP]" ]]; then
