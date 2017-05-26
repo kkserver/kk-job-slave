@@ -23,14 +23,14 @@ buildProject() {
 
 	for LN in `cat $SHDIR/options.ini`
 	do
-		if [[ $KK_SECTION = "[LN]" ]]; then
+		if [[ $KK_SECTION = "[CP]" ]]; then
 			KK_KEY=${LN%=*}
 			KK_VALUE=${LN#*=}
-			echo "ln -s $KK_KEY $WORKDIR/$KK_VALUE"
-			ln -s $KK_KEY $WORKDIR/$KK_VALUE
+			echo "cp -r $KK_KEY $WORKDIR/$KK_VALUE"
+			cp -r $KK_KEY $WORKDIR/$KK_VALUE
 			continue
 		fi
-		if [[ $LN = "[LN]" ]]; then
+		if [[ $LN = "[CP]" ]]; then
 			KK_SECTION="$LN"
 		fi
 	done
@@ -38,7 +38,7 @@ buildProject() {
 	CMD="cd $SRC_PATH"
 	runCommand
 
-	CMD="go get -d"
+	CMD="go get -d -u"
 	runCommand
 
 	#build
