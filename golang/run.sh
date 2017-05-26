@@ -26,8 +26,8 @@ buildProject() {
 		if [[ $KK_SECTION = "[LN]" ]]; then
 			KK_KEY=${LN%=*}
 			KK_VALUE=${LN#*=}
-			echo "ln -s $KK_KEY=$WORKDIR/$KK_VALUE"
-			ln -s $KK_KEY=$WORKDIR/$KK_VALUE
+			echo "ln -s $KK_KEY $WORKDIR/$KK_VALUE"
+			ln -s $KK_KEY $WORKDIR/$KK_VALUE
 			continue
 		fi
 		if [[ $LN = "[LN]" ]]; then
