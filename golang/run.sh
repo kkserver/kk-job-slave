@@ -28,15 +28,29 @@ buildProject() {
 			KK_VALUE=${LN#*=}
 			CMD="cp -r $KK_KEY $WORKDIR/$KK_VALUE"
 			runCommand
-			CMD="cd $WORKDIR/$KK_VALUE"
+			continue
+		fi
+		if [[ $LN = "[CP]" ]]; then
+			KK_SECTION="$LN"
+		fi
+	done
+
+	for LN in `cat $SHDIR/options.ini`
+	do
+		if [[ $KK_SECTION = "[GIT]" ]]; then
+			KK_KEY=${LN%=*}
+			KK_VALUE=${LN#*=}
+			CMD="cd $WORKDIR/$KK_KEY"
 			runCommand
-			CMD="git pull"
+			CMD="git checkout $KK_VALUE"
+			runCommand
+			CMD="git pull origin $KK_VALUE"
 			runCommand
 			CMD="cd $WORKDIR"
 			runCommand
 			continue
 		fi
-		if [[ $LN = "[CP]" ]]; then
+		if [[ $LN = "[GIT]" ]]; then
 			KK_SECTION="$LN"
 		fi
 	done
