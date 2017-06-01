@@ -24,6 +24,9 @@ buildProject() {
 	for LN in `cat $SHDIR/options.ini`
 	do
 		if [[ $KK_SECTION = "[CP]" ]]; then
+			if [[ $LN = "[GIT]" ]]; then
+				break
+			fi
 			KK_KEY=${LN%=*}
 			KK_VALUE=${LN#*=}
 			CMD="cp -r $KK_KEY $WORKDIR/$KK_VALUE"
@@ -38,6 +41,9 @@ buildProject() {
 	for LN in `cat $SHDIR/options.ini`
 	do
 		if [[ $KK_SECTION = "[GIT]" ]]; then
+			if [[ $LN = "[CP]" ]]; then
+				break
+			fi
 			KK_KEY=${LN%=*}
 			KK_VALUE=${LN#*=}
 			CMD="cd $WORKDIR/$KK_KEY"
