@@ -40,7 +40,7 @@ do
 	fi
 done
 
-if [ "$DEBUG" ]; then
+if [[ $DEBUG = "1" ]]; then
 	CONFIG=Debug
 else
 	CONFIG=Release
