@@ -26,7 +26,7 @@ echo "PROJECT: $PROJECT"
 echo "SCHEME: $SCHEME"
 echo "DEBUG: $DEBUG"
 
-for LN in `cat $SHDIR/options.ini`
+for LN in `cat $SHDIR/env.ini`
 do
 	if [[ $KK_SECTION = "[ENV]" ]]; then
 		KK_KEY=${LN%=*}
