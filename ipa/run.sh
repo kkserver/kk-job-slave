@@ -57,9 +57,12 @@ if [ -n "$GIT" ]; then
 	CMD="cd main"
 	runCommand
 
+	CMD="git checkout $T"
+	runCommand
+
 	WORKDIR=`pwd`
 
-	CMD="fir build_ipa $PROJECT -w -S $SCHEME -C $CONFIG -O $SHDIR/options-$CONFIG.plist -B $T -T $FIR_TOKEN"
+	CMD="fir build_ipa $PROJECT -w -S $SCHEME -C $CONFIG -O $SHDIR/options-$CONFIG.plist -T $FIR_TOKEN"
 	runCommand
 
 	CMD="git tag $TAG"
