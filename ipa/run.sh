@@ -26,41 +26,23 @@ echo "PROJECT: $PROJECT"
 echo "SCHEME: $SCHEME"
 echo "DEBUG: $DEBUG"
 
+for LN in `cat $SHDIR/options.ini`
+do
+	if [[ $KK_SECTION = "[ENV]" ]]; then
+		KK_KEY=${LN%=*}
+		KK_VALUE=${LN#*=}
+		CMD="export $KK_KEY=$KK_VALUE"
+		runCommand
+		continue
+	fi
+	if [[ $LN = "[ENV]" ]]; then
+		KK_SECTION="$LN"
+	fi
+done
+
 if [ "$DEBUG" ]; then
-	for LN in `cat $SHDIR/options.ini`
-	do
-		if [[ $KK_SECTION = "[DEBUG]" ]]; then
-			if [[ $LN = "[RELEASE]" ]]; then
-				break
-			fi
-			KK_KEY=${LN%=*}
-			KK_VALUE=${LN#*=}
-			CMD="export $KK_KEY=$KK_VALUE"
-			runCommand
-			continue
-		fi
-		if [[ $LN = "[DEBUG]" ]]; then
-			KK_SECTION="$LN"
-		fi
-	done
 	CONFIG=Debug
 else
-	for LN in `cat $SHDIR/options.ini`
-	do
-		if [[ $KK_SECTION = "[RELEASE]" ]]; then
-			if [[ $LN = "[DEBUG]" ]]; then
-				break
-			fi
-			KK_KEY=${LN%=*}
-			KK_VALUE=${LN#*=}
-			CMD="export $KK_KEY=$KK_VALUE"
-			runCommand
-			continue
-		fi
-		if [[ $LN = "[RELEASE]" ]]; then
-			KK_SECTION="$LN"
-		fi
-	done
 	CONFIG=Release
 fi
 
@@ -77,29 +59,7 @@ if [ -n "$GIT" ]; then
 
 	WORKDIR=`pwd`
 
-	CMD="git checkout $T"
-	runCommand
-
-	CMD="cd $PROJECT"
-	runCommand
-
-	if [ -f "Podfile" ]; then
-		CMD="pod install"
-		runCommand
-	fi
-
-	if [ -f "$SCHEME.xcworkspace" ]; then
-		CMD="xcodebuild -workspace $SCHEME.xcworkspace -scheme $SCHEME -configuration $CONFIG CODE_SIGN_IDENTITY=$IDENTITY -sdk iphoneos" 
-		runCommand
-	else
-		CMD="xcodebuild -scheme $SCHEME -configuration $CONFIG CODE_SIGN_IDENTITY=$IDENTITY -sdk iphoneos" 
-		runCommand
-	fi
-
-	CMD="xcrun -sdk iphoneos PackageApplication -v build/$SCHEME.app -o $OUTDIR/$SCHEME.ipa"
-	runCommand
-
-	CMD="fir p build/$SCHEME.ipa -T $FIR_TOKEN"
+	CMD="fir build_ipa $PROJECT -w -S $SCHEME -C $CONFIG -O $SHDIR/options-$CONFIG.plist -B $T -T $FIR_TOKEN"
 	runCommand
 
 	CMD="git tag $TAG"
