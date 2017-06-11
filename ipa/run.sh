@@ -25,6 +25,7 @@ echo "GIT: $GIT"
 echo "PROJECT: $PROJECT"
 echo "SCHEME: $SCHEME"
 echo "DEBUG: $DEBUG"
+echo "PROFILE: $PROFILE"
 
 for LN in `cat $SHDIR/env.ini`
 do
@@ -62,7 +63,7 @@ if [ -n "$GIT" ]; then
 
 	WORKDIR=`pwd`
 
-	CMD="fir build_ipa $PROJECT -w -S $SCHEME -C $CONFIG -O $SHDIR/options-$CONFIG.plist -T $FIR_TOKEN"
+	CMD="fir build_ipa $PROJECT -w -S $SCHEME -C $CONFIG -O $SHDIR/options-$CONFIG.plist -p -T $FIR_TOKEN -f $SHDIR/cert/$PROFILE.mobileprovision"
 	runCommand
 
 	CMD="git tag $TAG"
