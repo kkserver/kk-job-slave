@@ -62,6 +62,14 @@ if [ -n "$GIT" ]; then
 
 	WORKDIR=`pwd`
 
+	CMD="cd $PROJECT"
+	runCommand
+
+	echo -e "ndk.dir=$ANDROID_NDK_DIR\nsdk.dir=$ANDROID_SDK_DIR" > "./local.properties"
+
+	CMD="cd $WORKDIR"
+	runCommand
+
 	if [[ $FLAVOR = "" ]]; then
 		CMD="fir build_apk $PROJECT -p -T $FIR_TOKEN"
 	else
