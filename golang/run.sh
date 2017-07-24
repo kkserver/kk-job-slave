@@ -29,6 +29,9 @@ buildProject() {
 			fi
 			KK_KEY=${LN%=*}
 			KK_VALUE=${LN#*=}
+			DIR=$WORKDIR/$KK_VALUE
+			CMD="mkdir -p ${DIR%/*}"
+			runCommand
 			CMD="cp -r $KK_KEY $WORKDIR/$KK_VALUE"
 			runCommand
 			continue
